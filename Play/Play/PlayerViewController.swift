@@ -16,7 +16,6 @@ class PlayerViewController: UIViewController {
 
     var currentIndex: Int!
     var player: AVPlayer!
-//    var player: AVQueuePlayer!
     var trackImageView: UIImageView!
 
     var playPauseButton: UIButton!
@@ -48,7 +47,6 @@ class PlayerViewController: UIViewController {
         currentIndex = 0
 
         player = AVPlayer()
-//        player = AVQueuePlayer()
 
         loadVisualElements()
         loadTrackSlider()
@@ -149,7 +147,7 @@ class PlayerViewController: UIViewController {
         slider.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         
         sliderMinLabel = UILabel()
-        sliderMinLabel.text = ""//String(slider.minimumValue)
+        sliderMinLabel.text = "0:00"
         sliderMinLabel.font = UIFont.boldSystemFont(ofSize: 8.0)
         sliderMinLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sliderMinLabel)
@@ -158,7 +156,7 @@ class PlayerViewController: UIViewController {
         sliderMinLabel.leadingAnchor.constraint(equalTo: slider.leadingAnchor).isActive = true
         
         sliderMaxLabel = UILabel()
-        sliderMaxLabel.text = ""//String(slider.maximumValue)
+        sliderMaxLabel.text = "0:00"
         sliderMaxLabel.font = UIFont.boldSystemFont(ofSize: 8.0)
         sliderMaxLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(sliderMaxLabel)
