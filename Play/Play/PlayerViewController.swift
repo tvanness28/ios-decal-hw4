@@ -15,7 +15,8 @@ class PlayerViewController: UIViewController {
     var scAPI: SoundCloudAPI!
 
     var currentIndex: Int!
-    var player: AVQueuePlayer!
+    var player: AVPlayer!
+//    var player: AVQueuePlayer!
     var trackImageView: UIImageView!
 
     var playPauseButton: UIButton!
@@ -25,11 +26,19 @@ class PlayerViewController: UIViewController {
     var artistLabel: UILabel!
     var titleLabel: UILabel!
     var didPlay: [Track]!
+    
+    var slider: UISlider!
+    var sliderMinLabel: UILabel!
+    var sliderMaxLabel: UILabel!
 
     var paused = true
+    var attemptingToPlay = false
+    var msecs = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let _ = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updateTrackSlider), userInfo: nil, repeats: true)
+
         view = UIView(frame: UIScreen.main.bounds)
         view.backgroundColor = UIColor.white
 
@@ -38,9 +47,11 @@ class PlayerViewController: UIViewController {
         self.didPlay = []
         currentIndex = 0
 
-        player = AVQueuePlayer()
+        player = AVPlayer()
+//        player = AVQueuePlayer()
 
         loadVisualElements()
+        loadTrackSlider()
         loadPlayerButtons()
     }
 
@@ -118,6 +129,106 @@ class PlayerViewController: UIViewController {
         titleLabel.text = track.title
         artistLabel.text = track.artist
     }
+    
+    func loadTrackSlider() {
+        let height = UIScreen.main.bounds.size.height
+
+        
+        slider = UISlider()
+        slider.minimumValue = 0.0
+        slider.maximumValue = 100.0
+        slider.isContinuous = false
+        slider.setThumbImage(#imageLiteral(resourceName: "trackThumb.png"), for: .normal)
+        slider.addTarget(self, action: #selector(sliderGrabbed), for: UIControlEvents.touchDown)
+        slider.addTarget(self, action: #selector(sliderReleased), for: UIControlEvents.valueChanged)
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(slider)
+        
+        slider.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -height/15).isActive = true
+        slider.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        slider.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        
+        sliderMinLabel = UILabel()
+        sliderMinLabel.text = ""//String(slider.minimumValue)
+        sliderMinLabel.font = UIFont.boldSystemFont(ofSize: 8.0)
+        sliderMinLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(sliderMinLabel)
+        
+        sliderMinLabel.topAnchor.constraint(equalTo: slider.bottomAnchor).isActive = true
+        sliderMinLabel.leadingAnchor.constraint(equalTo: slider.leadingAnchor).isActive = true
+        
+        sliderMaxLabel = UILabel()
+        sliderMaxLabel.text = ""//String(slider.maximumValue)
+        sliderMaxLabel.font = UIFont.boldSystemFont(ofSize: 8.0)
+        sliderMaxLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(sliderMaxLabel)
+        
+        sliderMaxLabel.topAnchor.constraint(equalTo: slider.bottomAnchor).isActive = true
+        sliderMaxLabel.trailingAnchor.constraint(equalTo: slider.trailingAnchor).isActive = true
+        
+    }
+    
+    func getTimeStamp(_ seconds: Float) -> String {
+        let minutes = Int(seconds/60)
+        let remaining_seconds = Int(Int(seconds) - (minutes * 60))
+        var sec_string = String(remaining_seconds)
+        if remaining_seconds < 10 {
+            sec_string = "0\(sec_string)"
+        }
+        return "\(String(minutes)):\(sec_string)"
+    }
+    
+    func playSong() -> Bool {
+        if let cur_song = player.currentItem {
+            if cur_song.status == .readyToPlay {
+                player.play()
+                playPauseButton.isSelected = true
+                slider.maximumValue = Float(CMTimeGetSeconds((player.currentItem!.duration)))
+                sliderMaxLabel.text = getTimeStamp(slider.maximumValue)
+                paused = !paused
+                attemptingToPlay = false
+                return true
+            }
+        }
+        return false
+    }
+    
+    func updateTrackSlider() {
+        msecs += 1
+        
+        let curSeconds = Float(CMTimeGetSeconds((player.currentTime())))
+        if curSeconds > 0.0 && msecs % 10 == 0 {
+            sliderMinLabel.text = getTimeStamp(curSeconds)
+        }
+        
+        if !slider.isSelected {
+            slider.setValue(curSeconds, animated: true)
+        }
+        
+        if curSeconds == slider.maximumValue {
+            nextTrackTapped(nextButton)
+        }
+        
+        if attemptingToPlay {
+            playPauseButton.isEnabled = false
+            if !playSong() {
+                attemptingToPlay = true
+            }
+        } else {
+            playPauseButton.isEnabled = true
+        }
+        
+    }
+    
+    func sliderGrabbed() {
+        slider.isSelected = true
+    }
+    
+    func sliderReleased() {
+        slider.isSelected = false
+        player.seek(to: CMTimeMakeWithSeconds(Double(slider.value), 10000))
+        sliderMinLabel.text = getTimeStamp(slider.value)
+    }
 
     /*
      *  This Method should play or pause the song, depending on the song's state
@@ -135,6 +246,32 @@ class PlayerViewController: UIViewController {
         let track = tracks[currentIndex]
         let url = URL(string: "https://api.soundcloud.com/tracks/\(track.id as Int)/stream?client_id=\(clientID)")!
         // FILL ME IN
+        
+        let item = AVPlayerItem(url: url)
+
+        if player.currentItem != item && (player.currentItem == nil
+            || sender == nextButton || sender == previousButton) {
+            player.replaceCurrentItem(with: item)
+            sliderMinLabel.text = "0:00"
+            playPauseButton.isSelected = true
+            paused = true
+        }
+        
+        if paused {
+            if !playSong() {
+                attemptingToPlay = true
+            }
+        } else {
+            player.pause()
+            playPauseButton.isSelected = false
+            paused = !paused
+        }
+
+    }
+    
+    func backForward (_ sender: UIButton) {
+        loadTrackElements()
+        playOrPauseTrack(sender)
 
     }
 
@@ -146,6 +283,13 @@ class PlayerViewController: UIViewController {
      */
     func nextTrackTapped(_ sender: UIButton) {
         // FILL ME IN
+        if (currentIndex + 1) < tracks.count {
+            currentIndex = currentIndex + 1
+            backForward(sender)
+        } else if currentIndex == (tracks.count - 1) {
+            currentIndex = 0
+            backForward(sender)
+        }
     }
 
     /*
@@ -159,7 +303,19 @@ class PlayerViewController: UIViewController {
      */
 
     func previousTrackTapped(_ sender: UIButton) {
-        // FILL ME IN
+        let curSeconds = CMTimeGetSeconds((player.currentTime()))
+        if curSeconds >= 3 {
+            player.seek(to: kCMTimeZero)
+            sliderMinLabel.text = "0:00"
+        } else {
+            if currentIndex - 1 >= 0 {
+                currentIndex = currentIndex - 1
+                backForward(sender)
+            } else if currentIndex == 0 {
+                currentIndex = tracks.count - 1
+                backForward(sender)
+            }
+        }
     }
 
 

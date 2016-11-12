@@ -17,6 +17,9 @@
 		3AC696771C0A816C005A63F8 /* SoundCloudAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC696761C0A816C005A63F8 /* SoundCloudAPI.swift */; };
 		3AC6967B1C0A8659005A63F8 /* next.png in Resources */ = {isa = PBXBuildFile; fileRef = 3AC6967A1C0A8659005A63F8 /* next.png */; };
 		3AC6967D1C0A865E005A63F8 /* previous.png in Resources */ = {isa = PBXBuildFile; fileRef = 3AC6967C1C0A865E005A63F8 /* previous.png */; };
+		A571230D1DD7C17400EC42A3 /* trackThumb.png in Resources */ = {isa = PBXBuildFile; fileRef = A571230C1DD7C17400EC42A3 /* trackThumb.png */; };
+		A571230F1DD7C1B800EC42A3 /* trackThumb@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A571230E1DD7C1B800EC42A3 /* trackThumb@2x.png */; };
+		A57123111DD7C1C300EC42A3 /* trackThumb@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A57123101DD7C1C300EC42A3 /* trackThumb@3x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +35,9 @@
 		3AC696761C0A816C005A63F8 /* SoundCloudAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundCloudAPI.swift; sourceTree = "<group>"; };
 		3AC6967A1C0A8659005A63F8 /* next.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = next.png; sourceTree = "<group>"; };
 		3AC6967C1C0A865E005A63F8 /* previous.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = previous.png; sourceTree = "<group>"; };
+		A571230C1DD7C17400EC42A3 /* trackThumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trackThumb.png; sourceTree = "<group>"; };
+		A571230E1DD7C1B800EC42A3 /* trackThumb@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trackThumb@2x.png"; sourceTree = "<group>"; };
+		A57123101DD7C1C300EC42A3 /* trackThumb@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trackThumb@3x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +101,9 @@
 		3AC6966F1C0A8072005A63F8 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				A57123101DD7C1C300EC42A3 /* trackThumb@3x.png */,
+				A571230E1DD7C1B800EC42A3 /* trackThumb@2x.png */,
+				A571230C1DD7C17400EC42A3 /* trackThumb.png */,
 				3AC696711C0A808C005A63F8 /* play.png */,
 				3AC696701C0A808C005A63F8 /* pause.png */,
 				3AC6967A1C0A8659005A63F8 /* next.png */,
@@ -163,10 +172,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AA8F0121C097DB8005ACCBD /* LaunchScreen.storyboard in Resources */,
+				A57123111DD7C1C300EC42A3 /* trackThumb@3x.png in Resources */,
 				3AC696731C0A808C005A63F8 /* play.png in Resources */,
 				3AC6967B1C0A8659005A63F8 /* next.png in Resources */,
+				A571230F1DD7C1B800EC42A3 /* trackThumb@2x.png in Resources */,
 				3AC6967D1C0A865E005A63F8 /* previous.png in Resources */,
 				3AA8F00F1C097DB8005ACCBD /* Assets.xcassets in Resources */,
+				A571230D1DD7C17400EC42A3 /* trackThumb.png in Resources */,
 				3AC696721C0A808C005A63F8 /* pause.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
